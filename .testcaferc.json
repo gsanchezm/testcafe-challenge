@@ -1,0 +1,16 @@
+{ 
+    "browsers": ["chrome"],
+    "src": "test/*.js",
+    "screenshots": {
+        "path":  "./results/screenshots/",
+        "takeOnFails": true, 
+        "fullPage": false
+    },
+    "skipJsErrors": true, 
+    "concurrency": 1,
+    "selectorTimeOut": 5000,
+    "assertionTimeOut": 5000,
+    "pageLoadTimeOut": 5000,
+    "speed": 1
+
+}
