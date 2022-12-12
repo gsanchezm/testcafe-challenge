@@ -1,0 +1,5 @@
+URL=http://localhost:3001
+URI=http://localhost:3000/devices
+SYSTEM_NAME=Test
+SYSTEM_TYPE=MAC
+SYSTEM_CAPACITY=500
