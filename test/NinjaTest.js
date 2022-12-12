@@ -1,6 +1,7 @@
 import mainPage from '../pages/mainPage';
 import addDevicePage from '../pages/addDevicePage';
-import {assertions} from '../support/assertions'
+import {assertions} from '../support/assertions';
+import {DeviceModel} from '../models/deviceModel';
 import dotenv from 'dotenv'
 
 dotenv.config();
@@ -8,6 +9,7 @@ let getAPIDevices;
 let getFirstDevice;
 let modifyDevice;
 let devicesCounter;
+let systemInfo;
 
 fixture('Ninja Fixture')
     .page`${process.env.URL}`
@@ -18,7 +20,7 @@ fixture('Ninja Fixture')
         getAPIDevices = await t.request({
         url: `${process.env.URI}`,
         method: "GET",
-    });
+    }); 
 });
 
 test('Verify devices exist on UI',async () =>{
@@ -30,9 +32,10 @@ test('Verify devices exist on UI',async () =>{
         var btnDevicesRemove = await mainPage.getDevicesMainBox().nth(i).child('.device-remove');
 
         getAPIDevices.body.forEach(async device => {
-            assertions.checkIfActualValue(deviceUIText.withText(device.system_name).exists).isTrue();  
-            assertions.checkIfActualValue(deviceUIText.withText(device.type).exists).isTrue();
-            assertions.checkIfActualValue(deviceUIText.withText(device.hdd_capacity).exists).isTrue();
+            systemInfo = new DeviceModel(device.system_name,device.type,device.hdd_capacity); 
+            for(var arrayElements=0; arrayElements<3;arrayElements++){
+                assertions.checkIfActualValue(deviceUIText.withText(systemInfo[Object.keys(systemInfo)[arrayElements]]).exists).isTrue();
+            }
         });
 
         assertions.checkIfActualValue(btnDevicesEdit.exists).isTrue();
@@ -40,18 +43,20 @@ test('Verify devices exist on UI',async () =>{
       }
 });
 
-test('Verify is Device is created using UI',async () =>{
+test('Verify if Device is created using UI',async () =>{
+    systemInfo = new DeviceModel(process.env.SYSTEM_NAME,process.env.SYSTEM_TYPE,process.env.SYSTEM_CAPACITY); 
+
     devicesCounter = await mainPage.getDevicesMainBox().count;
 
     mainPage.goToAddDevices();
-    await addDevicePage.typingSystemName(process.env.SYSTEM_NAME).andSelectingType(process.env.SYSTEM_TYPE).withCapacity(process.env.SYSTEM_CAPACITY).saveDevice();
+    await addDevicePage.typingSystemName(systemInfo.name).andSelectingType(systemInfo.type).withCapacity(systemInfo.capacity).saveDevice();
 
     for(var i=0; i<= devicesCounter-1; i++){
         var deviceUIText = await mainPage.getDevicesListNames().nth(i);
 
-        assertions.checkIfActualValue(deviceUIText.withText(process.env.SYSTEM_NAME).exists).isTrue();  
-        assertions.checkIfActualValue(deviceUIText.withText(process.env.SYSTEM_TYPE).exists).isTrue();
-        assertions.checkIfActualValue(deviceUIText.withText(process.env.SYSTEM_CAPACITY).exists).isTrue();
+        for(var arrayElements=0; arrayElements<3; arrayElements++){
+            assertions.checkIfActualValue(deviceUIText.withText(systemInfo[Object.keys(systemInfo)[arrayElements]]).exists).isTrue();
+        }
     }
 });
 
