@@ -43,7 +43,7 @@ test('Verify devices exist on UI',async () =>{
       }
 });
 
-test.only('Verify if Device is created using UI',async () =>{
+test('Verify if Device is created using UI',async () =>{
     systemInfo = new DeviceModel(process.env.SYSTEM_NAME,process.env.SYSTEM_TYPE,process.env.SYSTEM_CAPACITY); 
 
     devicesCounter = await mainPage.getDevicesMainBox().count;
