@@ -23,7 +23,7 @@ class MainPage extends BasePage{
     }
 
     async goToAddDevices(){
-        await t.click(this.btnAddDevice);
+        await this.clickOnElement(this.btnAddDevice);
     }
 }
 

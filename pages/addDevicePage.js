@@ -13,19 +13,19 @@ class AddDevicePage extends BasePage{
     }
 
     typingSystemName(systemName){
-        return this._chain(async ()=> await t.typeText(this.txtSystemName,systemName));
+        return this._chain(async ()=> await this.enterText(this.txtSystemName,systemName));
     }
 
     andSelectingType(type){    
-        return this._chain(async ()=> await t.click(this.drpType).click(this.drpType.find('option').withText(type)));
+        return this._chain(async ()=> await this.selectFromDropDown(this.drpType,type));
     }
     
     withCapacity(capacity){
-        return this._chain(async ()=> await t.typeText(this.txtHDDCapacity,capacity));
+        return this._chain(async ()=> await this.enterText(this.txtHDDCapacity,capacity));
     }
 
     async saveDevice(){
-        this._chain(async ()=> await t.click(this.btnSave));
+        this._chain(async ()=> await this.clickOnElement(this.btnSave));
         return this;
     }
 }
