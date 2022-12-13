@@ -14,5 +14,8 @@
     "dotenv": "^16.0.3",
     "testcafe": "^2.1.0",
     "testcafe-reporter-html": "^1.4.6"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.6.0"
   }
 }
