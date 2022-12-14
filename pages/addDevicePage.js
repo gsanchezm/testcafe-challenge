@@ -5,12 +5,12 @@ class AddDevicePage extends BasePage{
 
     constructor(){
         super()
-
-        this.txtSystemName = Selector("input[name='system_name']");
-        this.drpType = Selector('#type');
-        this.txtHDDCapacity = Selector("#hdd_capacity");
-        this.btnSave = Selector('.submitButton');
     }
+
+    get txtSystemName() { Selector("input[name='system_name']");}
+    get drpType() { Selector('#type');}
+    get txtHDDCapacity() {Selector("#hdd_capacity");}
+    get btnSave() {Selector('.submitButton');}
 
     typingSystemName(systemName){
         return this._chain(async ()=> await this.enterText(this.txtSystemName,systemName));

@@ -1,29 +1,42 @@
-import {Selector, t} from 'testcafe'
+import { Selector, t } from 'testcafe'
 import { BasePage } from './basePage';
 
-class MainPage extends BasePage{
+class MainPage extends BasePage {
 
-    constructor(){
+    constructor() {
         super();
-        this.deviceMainBox = Selector('.device-main-box');
-        this.dvDeviceOptions = this.deviceMainBox.child('.device-options');
-        this.dvDeviceInfo = this.deviceMainBox.child('.device-info');
-        this.deviceName = this.dvDeviceInfo.child('.device-name');
-        this.deviceType = this.dvDeviceInfo.find('.device-type');
-        this.deviceCapacity = this.dvDeviceInfo.child('.device-capacity');
-        this.btnAddDevice = Selector('.submitButton');
+
     }
 
-    getDevicesListNames(){
-       return this.deviceName;
+    get deviceMainBox() { return Selector('.device-main-box');}
+
+    get dvDeviceOptions() { return this.deviceMainBox.child('.device-options'); }
+    get dvDeviceInfo() { return this.deviceMainBox.child('.device-info'); }
+    
+    get deviceName() { return this.dvDeviceInfo.child('.device-name'); }
+    get deviceType() { return this.dvDeviceInfo.find('.device-type'); }
+    get deviceCapacity() { return this.dvDeviceInfo.child('.device-capacity'); 
+}
+    get btnAddDevice() { return Selector('.submitButton'); }
+
+    getDevicesListNames() {
+        return this.deviceName;
     }
 
-    getDevicesMainBox(){
+    getDevicesMainBox() {
         return this.deviceMainBox;
     }
 
-    async goToAddDevices(){
+    async goToAddDevices() {
         await this.clickOnElement(this.btnAddDevice);
+    }
+
+    async returnLastDeviceText() {
+        return await this.getText(this.deviceName.nth(-1));
+    }
+    
+    async returnLastDeviceText() {
+        return await this.getText(this.deviceName.nth(-1));
     }
 }
 

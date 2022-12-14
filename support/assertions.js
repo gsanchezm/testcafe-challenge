@@ -1,23 +1,17 @@
 import {t} from 'testcafe'
 
 export class Assertions{
-    actual;
 
-    checkIfActualValue(actual){
-        this.actual = actual;
-        return this;
+    async isTrue(actual,text='',timeOut=0){
+        await t.expect(actual).ok(text,{timeout: timeOut});
     }
 
-    async isTrue(){
-        await t.expect(this.actual).ok;
-    }
-
-    async isFalse(){
-        await t.expect(this.actual).notOk;
+    async isFalse(actual,text='',timeOut=0){
+        await t.expect(actual).notOk(text,{timeout: timeOut});
     }
     
-    async isEqualsAsExpected(expected){
-        await t.expect(this.actual).eql(expected);
+    async isEqualsAsExpected(actual,expected){
+        await t.expect(actual).eql(expected);
     }
 }
 

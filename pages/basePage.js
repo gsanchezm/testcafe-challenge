@@ -24,6 +24,10 @@ export class BasePage{
         return Selector(element);
     }
 
+    async getText(element){
+        return (await this.#getElement(element)).innerText;
+    }
+
     async clickOnElement(element){
         await t.click(await this.#getElement(element));
     }

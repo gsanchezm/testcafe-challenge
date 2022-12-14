@@ -28,21 +28,18 @@ test('Verify devices exist on UI',async () =>{
     devicesCounter = await mainPage.getDevicesMainBox().count;
 
     getAPIDevices.body.forEach(async device => {
-        systemInfo = new DeviceModel(device.system_name,device.type,device.hdd_capacity); 
-
+        systemInfo = new DeviceModel(device.system_name + 'XXXX',device.type,device.hdd_capacity); 
 
         for(var i=0; i<= devicesCounter-1; i++){
-            var deviceUIText = await mainPage.getDevicesListNames().nth(i);
+            const deviceUIText = await mainPage.getDevicesListNames().nth(i);
             var btnDevicesEdit = await mainPage.getDevicesMainBox().nth(i).child('.device-edit');
             var btnDevicesRemove = await mainPage.getDevicesMainBox().nth(i).child('.device-remove');
 
-            if(i<3){
-                assertions.checkIfActualValue(deviceUIText.withText(systemInfo[Object.keys(systemInfo)[i]]).exists).isTrue();
-            }
+            
         }
 
-        assertions.checkIfActualValue(btnDevicesEdit.exists).isTrue();
-        assertions.checkIfActualValue(btnDevicesRemove.exists).isTrue();
+        assertions.checkIfActualValue(btnDevicesEdit.visible).isTrue();
+        assertions.checkIfActualValue(btnDevicesRemove.visible).isTrue();
     });
 });
 
@@ -58,7 +55,7 @@ test('Verify if Device is created using UI',async () =>{
         var deviceUIText = await mainPage.getDevicesListNames().nth(i);
 
         if(i<3){
-            assertions.checkIfActualValue(deviceUIText.withText(systemInfo[Object.keys(systemInfo)[i]]).exists).isTrue();
+            assertions.checkIfActualValue(deviceUIText.withText(systemInfo[Object.keys(systemInfo)[i]]).visible).isTrue();
         }
     }
 });
@@ -90,9 +87,8 @@ test('Rename First Device',async t =>{
 });
 
 test('Delete last device',async t =>{
-    var deviceId;
-    devicesCounter = await mainPage.getDevicesMainBox().count;
-    var lastDevice = await mainPage.getDevicesListNames().nth(devicesCounter-1).innerText
+    let deviceId;
+    let lastDevice = await mainPage.returnLastDeviceText();
 
     getAPIDevices.body.forEach(async device =>{
         if(device.system_name === lastDevice){
@@ -105,9 +101,7 @@ test('Delete last device',async t =>{
         method: "DELETE",
     });
 
-    for(var i=0; i<= devicesCounter-1; i++){
-        var deviceUIText = await mainPage.getDevicesListNames().nth(i);
-
-        assertions.checkIfActualValue(deviceUIText.withText(lastDevice).exists).isFalse();  
-    }
+    mainPage.reloadPage();
+    await assertions
+    .isFalse(await mainPage.getDevicesListNames().nth(-1).withText(lastDevice).exists,'Device is not deleted', 5000);  
 });
