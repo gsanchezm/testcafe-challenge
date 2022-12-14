@@ -44,27 +44,13 @@ class MainPage extends BasePage {
         return await this.getText(this.deviceCapacity.nth(index));
     }
 
-    async deviceCreatedExist(index=0){
-        return await this.dvDeviceInfo.nth(index).innerText;
-    
-        //console.log(`${deviceInformation}`,typeof deviceInformation)
-        // for (const key in DeviceModel) {
-        //     await t.expect(deviceInformation).contains(DeviceModel[key]);
-        // }
-    }
-
     async getDevices(){
         const res = []
-        
-        //console.log(this.deviceMainBox.count)
         for(var i=0; i<= await this.getDevicesMainBox().count-1; i++){
             const devicesText = await this.dvDeviceInfo.nth(i).innerText;
             res.push(devicesText);
         }
-
         return res;
-        // const devicesList = await Selector('.list-devices').child('.device-info');
-        // return devicesList.map(el => el.innerText);
     }
 }
 
