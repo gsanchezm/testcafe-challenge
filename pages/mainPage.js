@@ -1,4 +1,5 @@
 import { Selector, t } from 'testcafe'
+import { DeviceModel } from '../models/deviceModel';
 import { BasePage } from './basePage';
 
 class MainPage extends BasePage {
@@ -30,13 +31,26 @@ class MainPage extends BasePage {
     async goToAddDevices() {
         await this.clickOnElement(this.btnAddDevice);
     }
-
-    async returnLastDeviceText() {
-        return await this.getText(this.deviceName.nth(-1));
-    }
     
-    async returnLastDeviceText() {
-        return await this.getText(this.deviceName.nth(-1));
+    async returnDeviceNameText(index=0) {
+        return await this.getText(this.deviceName.nth(index));
+    }
+
+    async returnDeviceTypeText(index=0) {
+        return await this.getText(this.deviceType.nth(index));
+    }
+
+    async returnDeviceCapacityText(index=0) {
+        return await this.getText(this.deviceCapacity.nth(index));
+    }
+
+    async deviceCreatedExist(index=0){
+        return await this.dvDeviceInfo.nth(index).innerText;
+    
+        //console.log(`${deviceInformation}`,typeof deviceInformation)
+        // for (const key in DeviceModel) {
+        //     await t.expect(deviceInformation).contains(DeviceModel[key]);
+        // }
     }
 }
 

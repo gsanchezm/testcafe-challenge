@@ -2,16 +2,16 @@ import {t} from 'testcafe'
 
 export class Assertions{
 
-    async isTrue(actual,text='',timeOut=0){
-        await t.expect(actual).ok(text,{timeout: timeOut});
+    async isTrue(actual,message='',timeOut=0){
+        await t.expect(actual).ok(message,{timeout: timeOut});
     }
 
-    async isFalse(actual,text='',timeOut=0){
-        await t.expect(actual).notOk(text,{timeout: timeOut});
+    async isFalse(actual,message='',timeOut=0){
+        await t.expect(actual).notOk(message,{timeout: timeOut});
     }
     
-    async isEqualsAsExpected(actual,expected){
-        await t.expect(actual).eql(expected);
+    async isEqualsAsExpected(actual,expected,message='',timeOut=0){
+        await t.expect(actual).eql(expected,message,{timeout: timeOut});
     }
 }
 

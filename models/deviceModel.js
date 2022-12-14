@@ -4,4 +4,16 @@ export class DeviceModel{
         this.type = type;
         this.capacity = capacity;
     }
+
+    get deviceName(){
+        return this.name;
+    }
+
+    get deviceType(){
+        return this.type;
+    }
+
+    get deviceCapacity(){
+        return this.capacity;
+    }
 }
