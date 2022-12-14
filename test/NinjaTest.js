@@ -4,6 +4,7 @@ import {assertions} from '../support/assertions';
 import {DeviceModel} from '../models/deviceModel';
 import dotenv from 'dotenv'
 import { faker } from '@faker-js/faker';
+import { t} from 'testcafe'
 
 dotenv.config();
 let getAPIDevices;
@@ -24,7 +25,7 @@ fixture('Ninja Fixture')
     }); 
 });
 
-test('Verify devices exist on UI',async () =>{
+test.only('Verify devices exist on UI',async () =>{
     devicesCounter = await mainPage.getDevicesMainBox().count;
 
     getAPIDevices.body.forEach(async device => {
@@ -35,15 +36,10 @@ test('Verify devices exist on UI',async () =>{
             var btnDevicesEdit = await mainPage.getDevicesMainBox().nth(i).child('.device-edit');
             var btnDevicesRemove = await mainPage.getDevicesMainBox().nth(i).child('.device-remove');
 
-            console.log(`Iteration: ${i}`)
-            // assertions.checkIfActualValue(deviceUIText.withExactText(device.system_name + 'XXXX').visible).isTrue();
-            // assertions.checkIfActualValue(deviceUIText.withExactText(device.type).visible).isTrue();
-            // assertions.checkIfActualValue(deviceUIText.withExactText(device.hdd_capacity).visible).isTrue();
-            if(i<3){
-                //assertions.checkIfActualValue(deviceUIText.withExactText(systemInfo[Object.keys(systemInfo)[i]]).visible).isTrue();
-
-            }
-            
+            assertions.isTrue(deviceUIText.withExactText(device.system_name + 'XXXX').visible)
+            assertions.isTrue(deviceUIText.withExactText(device.type).visible);
+            assertions.isTrue(deviceUIText.withExactText(device.hdd_capacity).visible);
+        
         }
 
         assertions.checkIfActualValue(btnDevicesEdit.visible).isTrue();
@@ -51,7 +47,7 @@ test('Verify devices exist on UI',async () =>{
     });
 });
 
-test.only('Verify if Device is created using UI',async () =>{
+test('Verify if Device is created using UI',async () =>{
     systemInfo = new DeviceModel(`Device ${faker.name.fullName()}`,process.env.SYSTEM_TYPE,process.env.SYSTEM_CAPACITY); 
     devicesCounter = await mainPage.getDevicesMainBox().count;
     const arraeglo = [];
@@ -65,20 +61,15 @@ test.only('Verify if Device is created using UI',async () =>{
 
     mainPage.reloadPage();
     
-     for(var i=0; i<= devicesCounter-1; i++){
-        const devicesInfo = await mainPage.deviceCreatedExist(i);
-        arraeglo.push(devicesInfo)
-    //     //var device = await mainPage.getDevicesMainBox().nth(i).innerText
-        
-    //     //console.log("Total number of separate lines is: " + (await mainPage.getDevicesMainBox().nth(i).innerText).split(' ').length);
-    //     if(i<3){
-    //         //console.log(systemInfo[Object.keys(systemInfo)[i]]);
-    //     }
-    //     /* if(i<3){
-    //         assertions
-    //             .isTrue(await mainPage.getDevicesListNames().nth(i).withText(systemInfo[Object.keys(systemInfo)[i]]).visible);
-    //     } */
-     }
+    const devicesList = await mainPage.getDevices();
+    const findDeviceName = devicesList.find(el => el.includes(systemInfo.name));
+    const findDeviceType = devicesList.find(el => el.includes(systemInfo.type));
+    const findDeviceCapacity = devicesList.find(el => el.includes(systemInfo.capacity));
+
+    await t.expect(findDeviceName).contains(systemInfo.name)
+    await t.expect(findDeviceType).contains(systemInfo.type)
+    await t.expect(findDeviceCapacity).contains(systemInfo.capacity)
+
 });
 
 test('Rename First Device',async t =>{

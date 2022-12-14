@@ -52,6 +52,20 @@ class MainPage extends BasePage {
         //     await t.expect(deviceInformation).contains(DeviceModel[key]);
         // }
     }
+
+    async getDevices(){
+        const res = []
+        
+        //console.log(this.deviceMainBox.count)
+        for(var i=0; i<= await this.getDevicesMainBox().count-1; i++){
+            const devicesText = await this.dvDeviceInfo.nth(i).innerText;
+            res.push(devicesText);
+        }
+
+        return res;
+        // const devicesList = await Selector('.list-devices').child('.device-info');
+        // return devicesList.map(el => el.innerText);
+    }
 }
 
 export default new MainPage();

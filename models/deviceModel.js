@@ -16,4 +16,8 @@ export class DeviceModel{
     get deviceCapacity(){
         return this.capacity;
     }
+
+    toRegex(){
+        
+    }
 }
