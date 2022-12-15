@@ -1,56 +1,57 @@
 import mainPage from '../pages/mainPage';
 import addDevicePage from '../pages/addDevicePage';
-import {assertions} from '../support/assertions';
-import {DeviceModel} from '../models/deviceModel';
+import { assertions } from '../support/assertions';
+import { DeviceModel } from '../models/deviceModel';
 import dotenv from 'dotenv'
 import { faker } from '@faker-js/faker';
-import { t} from 'testcafe'
 
 dotenv.config();
+let deviceId;
 let getAPIDevices;
 let getFirstDevice;
-let modifyDevice;
 let devicesCounter;
-let systemInfo;
 
 fixture('Ninja Fixture')
     .page`${process.env.URL}`
-    .beforeEach(async t =>{
+    .beforeEach(async t => {
         await t
-                .maximizeWindow()
+            .maximizeWindow()
 
         getAPIDevices = await t.request({
-        url: `${process.env.URI}`,
-        method: "GET",
-    }); 
-});
+            url: `${process.env.URI}`,
+            method: "GET",
+        });
+    });
 
-test.only('Verify devices exist on UI',async () =>{
+test('Verify devices exist on UI', async () => {
     devicesCounter = await mainPage.getDevicesMainBox().count;
+
+    const res = []
 
     getAPIDevices.body.forEach(async device => {
-        systemInfo = new DeviceModel(device.system_name + 'XXXX',device.type,device.hdd_capacity); 
-
-        for(var i=0; i<= devicesCounter-1; i++){
-            const deviceUIText = await mainPage.getDevicesListNames().nth(i);
-            var btnDevicesEdit = await mainPage.getDevicesMainBox().nth(i).child('.device-edit');
-            var btnDevicesRemove = await mainPage.getDevicesMainBox().nth(i).child('.device-remove');
-
-            assertions.isTrue(deviceUIText.withExactText(device.system_name + 'XXXX').visible)
-            assertions.isTrue(deviceUIText.withExactText(device.type).visible);
-            assertions.isTrue(deviceUIText.withExactText(device.hdd_capacity).visible);
-        
-        }
-
-        assertions.checkIfActualValue(btnDevicesEdit.visible).isTrue();
-        assertions.checkIfActualValue(btnDevicesRemove.visible).isTrue();
+        res.push(device);
     });
+
+    for(var i=0; i<= devicesCounter-1; i++){
+        
+        const devicesList = await mainPage.getDevices();
+        const findDeviceName = devicesList.find(el => el.includes(res[i].system_name));
+        const findDeviceType = devicesList.find(el => el.includes(res[i].type));
+        const findDeviceCapacity = devicesList.find(el => el.includes(res[i].hdd_capacity));
+
+        await assertions.contains(findDeviceName,res[i].system_name)
+        await assertions.contains(findDeviceType,res[i].type)
+        await assertions.contains(findDeviceCapacity,res[i].hdd_capacity)
+
+        // Button edit and remove exits
+        await assertions.isTrue(await mainPage.getDevicesMainBox().nth(i).find('.device-edit').visible);
+        await assertions.isTrue(await mainPage.getDevicesMainBox().nth(i).find('.device-remove').visible);
+    }
+        
 });
 
-test('Verify if Device is created using UI',async () =>{
-    systemInfo = new DeviceModel(`Device ${faker.name.fullName()}`,process.env.SYSTEM_TYPE,process.env.SYSTEM_CAPACITY); 
-    devicesCounter = await mainPage.getDevicesMainBox().count;
-    const arraeglo = [];
+test('Verify if Device is created using UI', async () => {
+    let systemInfo = new DeviceModel(`Device ${faker.name.fullName()}`, process.env.SYSTEM_TYPE, process.env.SYSTEM_CAPACITY);
 
     mainPage.goToAddDevices();
     await addDevicePage
@@ -60,24 +61,24 @@ test('Verify if Device is created using UI',async () =>{
         .saveDevice();
 
     mainPage.reloadPage();
-    
+
     const devicesList = await mainPage.getDevices();
     const findDeviceName = devicesList.find(el => el.includes(systemInfo.name));
     const findDeviceType = devicesList.find(el => el.includes(systemInfo.type));
     const findDeviceCapacity = devicesList.find(el => el.includes(systemInfo.capacity));
 
-    await t.expect(findDeviceName).contains(systemInfo.name)
-    await t.expect(findDeviceType).contains(systemInfo.type)
-    await t.expect(findDeviceCapacity).contains(systemInfo.capacity)
+    await assertions.contains(findDeviceName, systemInfo.name)
+    await assertions.contains(findDeviceType, systemInfo.type)
+    await assertions.contains(findDeviceCapacity, systemInfo.capacity)
 
 });
 
-test('Rename First Device',async t =>{
-    let deviceId;
+test('Rename First Device', async t => {
+    let modifyDevice;
     let firstDevice = await mainPage.returnDeviceNameText(0);
 
-    getAPIDevices.body.forEach(async device =>{
-        if(device.system_name === firstDevice){
+    getAPIDevices.body.forEach(async device => {
+        if (device.system_name === firstDevice) {
             deviceId = device.id;
         }
     });
@@ -85,8 +86,8 @@ test('Rename First Device',async t =>{
     modifyDevice = await t.request({
         url: `${process.env.URI}/${deviceId}`,
         method: "PUT",
-        body :{ system_name: "Rename Device", type: "WINDOWS_WORKSTATION", hdd_capacity: "10"},
-    }); 
+        body: { system_name: "Rename Device", type: "WINDOWS_WORKSTATION", hdd_capacity: "10" },
+    });
 
     getFirstDevice = await t.request({
         url: `${process.env.URI}/${deviceId}`,
@@ -95,16 +96,15 @@ test('Rename First Device',async t =>{
 
 
     mainPage.reloadPage();
-    assertions
-        .isEqualsAsExpected(await mainPage.getDevicesListNames().nth(0).innerText,getFirstDevice.body.system_name,'Check device name is updated',5000)
+    await assertions
+        .isEqualsAsExpected(await mainPage.getDevicesListNames().nth(0).innerText, getFirstDevice.body.system_name, 'Check device name is updated');
 });
 
-test('Delete last device',async t =>{
-    let deviceId;
+test('Delete last device', async t => {
     let lastDevice = await mainPage.returnDeviceNameText(-1);
 
-    getAPIDevices.body.forEach(async device =>{
-        if(device.system_name === lastDevice){
+    getAPIDevices.body.forEach(async device => {
+        if (device.system_name === lastDevice) {
             deviceId = device.id;
         }
     });
@@ -116,5 +116,5 @@ test('Delete last device',async t =>{
 
     mainPage.reloadPage();
     await assertions
-        .isFalse(await mainPage.getDevicesListNames().nth(-1).withText(lastDevice).exists,'Device is not deleted', 5000);  
+        .isFalse(await mainPage.getDevicesListNames().nth(-1).withText(lastDevice).exists, 'Device is not deleted');
 });
