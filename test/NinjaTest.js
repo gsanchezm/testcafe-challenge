@@ -23,14 +23,20 @@ fixture('Ninja Fixture')
     });
 
 test('Verify devices exist on UI', async () => {
-
     for (let i = 0; i < getAPIDevices.body.length; i++) {
         const element = getAPIDevices.body[i];
+        
+        //Verify elements are visible
         const {systemNameSelector,systemTypeSelector,systemCapacityelector} = await mainPage.findElementsByAPI(element.system_name,element.type,element.hdd_capacity);
         await assertions.isTrue(systemNameSelector.visible);
         await assertions.isTrue(systemTypeSelector.visible);
         await assertions.isTrue(systemCapacityelector.visible);
+
+        // Button edit and remove exits
+        await assertions.isTrue(await mainPage.getDevicesMainBox().nth(i).find('.device-edit').visible);
+        await assertions.isTrue(await mainPage.getDevicesMainBox().nth(i).find('.device-remove').visible);
     }
+        
 });
 
 test('Verify if Device is created using UI', async () => {
