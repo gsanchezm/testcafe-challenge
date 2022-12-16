@@ -9,7 +9,6 @@ dotenv.config();
 let deviceId;
 let getAPIDevices;
 let getFirstDevice;
-let devicesCounter;
 
 fixture('Ninja Fixture')
     .page`${process.env.URL}`
@@ -24,30 +23,14 @@ fixture('Ninja Fixture')
     });
 
 test('Verify devices exist on UI', async () => {
-    devicesCounter = await mainPage.getDevicesMainBox().count;
 
-    const res = []
-
-    getAPIDevices.body.forEach(async device => {
-        res.push(device);
-    });
-
-    for(var i=0; i<= devicesCounter-1; i++){
-        
-        const devicesList = await mainPage.getDevices();
-        const findDeviceName = devicesList.find(el => el.includes(res[i].system_name));
-        const findDeviceType = devicesList.find(el => el.includes(res[i].type));
-        const findDeviceCapacity = devicesList.find(el => el.includes(res[i].hdd_capacity));
-
-        await assertions.contains(findDeviceName,res[i].system_name)
-        await assertions.contains(findDeviceType,res[i].type)
-        await assertions.contains(findDeviceCapacity,res[i].hdd_capacity)
-
-        // Button edit and remove exits
-        await assertions.isTrue(await mainPage.getDevicesMainBox().nth(i).find('.device-edit').visible);
-        await assertions.isTrue(await mainPage.getDevicesMainBox().nth(i).find('.device-remove').visible);
+    for (let i = 0; i < getAPIDevices.body.length; i++) {
+        const element = getAPIDevices.body[i];
+        const {systemNameSelector,systemTypeSelector,systemCapacityelector} = await mainPage.findElementsByAPI(element.system_name,element.type,element.hdd_capacity);
+        await assertions.isTrue(systemNameSelector.visible);
+        await assertions.isTrue(systemTypeSelector.visible);
+        await assertions.isTrue(systemCapacityelector.visible);
     }
-        
 });
 
 test('Verify if Device is created using UI', async () => {
@@ -74,7 +57,6 @@ test('Verify if Device is created using UI', async () => {
 });
 
 test('Rename First Device', async t => {
-    let modifyDevice;
     let firstDevice = await mainPage.returnDeviceNameText(0);
 
     getAPIDevices.body.forEach(async device => {
@@ -83,7 +65,7 @@ test('Rename First Device', async t => {
         }
     });
 
-    modifyDevice = await t.request({
+    await t.request({
         url: `${process.env.URI}/${deviceId}`,
         method: "PUT",
         body: { system_name: "Rename Device", type: "WINDOWS_WORKSTATION", hdd_capacity: "10" },
@@ -93,7 +75,6 @@ test('Rename First Device', async t => {
         url: `${process.env.URI}/${deviceId}`,
         method: "GET",
     });
-
 
     mainPage.reloadPage();
     await assertions

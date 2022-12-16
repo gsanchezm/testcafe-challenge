@@ -1,5 +1,4 @@
 import { Selector, t } from 'testcafe'
-import { DeviceModel } from '../models/deviceModel';
 import { BasePage } from './basePage';
 
 class MainPage extends BasePage {
@@ -14,11 +13,12 @@ class MainPage extends BasePage {
     get dvDeviceOptions() { return this.deviceMainBox.child('.device-options'); }
     get dvDeviceInfo() { return this.deviceMainBox.child('.device-info'); }
     
-    get deviceName() { return this.dvDeviceInfo.child('.device-name'); }
+    get deviceName() { return this.dvDeviceInfo.find('.device-name'); }
     get deviceType() { return this.dvDeviceInfo.find('.device-type'); }
-    get deviceCapacity() { return this.dvDeviceInfo.child('.device-capacity'); 
+    get deviceCapacity() { return this.dvDeviceInfo.find('.device-capacity'); 
 }
     get btnAddDevice() { return Selector('.submitButton'); }
+    
 
     getDevicesListNames() {
         return this.deviceName;
@@ -51,6 +51,14 @@ class MainPage extends BasePage {
             res.push(devicesText);
         }
         return res;
+    }
+
+    async findElementsByAPI(systemName, type, hddCapacity, index = 0){
+        const systemNameSelector = this.deviceName().withText(systemName);
+        const systemTypeSelector = this.deviceType().withText(type);
+        const systemCapacityelector = this.deviceCapacity().withText(hddCapacity);
+
+        return {systemNameSelector,systemTypeSelector,systemCapacityelector}
     }
 }
 
