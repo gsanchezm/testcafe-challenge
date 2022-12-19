@@ -15,8 +15,7 @@ class MainPage extends BasePage {
     
     get deviceName() { return this.dvDeviceInfo.find('.device-name'); }
     get deviceType() { return this.dvDeviceInfo.find('.device-type'); }
-    get deviceCapacity() { return this.dvDeviceInfo.find('.device-capacity'); 
-}
+    get deviceCapacity() { return this.dvDeviceInfo.find('.device-capacity');}
     get btnAddDevice() { return Selector('.submitButton'); }
     
 
@@ -36,13 +35,16 @@ class MainPage extends BasePage {
         return await this.getText(this.deviceName.nth(index));
     }
 
-    async returnDeviceTypeText(index=0) {
-        return await this.getText(this.deviceType.nth(index));
+    async returnOption(option, index = 0){
+        return await this.getDevicesMainBox().nth(index).find(option)
     }
+    // async returnDeviceTypeText(index=0) {
+    //     return await this.getText(this.deviceType.nth(index));
+    // }
 
-    async returnDeviceCapacityText(index=0) {
-        return await this.getText(this.deviceCapacity.nth(index));
-    }
+    // async returnDeviceCapacityText(index=0) {
+    //     return await this.getText(this.deviceCapacity.nth(index));
+    // }
 
     async getDevices(){
         const res = []

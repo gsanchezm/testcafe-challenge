@@ -23,6 +23,8 @@ fixture('Ninja Fixture')
     });
 
 test('Verify devices exist on UI', async () => {
+    const optionsEditRemove = ['.device-edit','.device-remove'];
+
     for (let i = 0; i < getAPIDevices.body.length; i++) {
         const element = getAPIDevices.body[i];
         
@@ -33,8 +35,9 @@ test('Verify devices exist on UI', async () => {
         assertions.isTrue(systemCapacityelector.visible);
 
         // Button edit and remove exits
-        assertions.isTrue(mainPage.getDevicesMainBox().nth(i).find('.device-edit').visible);
-        assertions.isTrue(mainPage.getDevicesMainBox().nth(i).find('.device-remove').visible);
+        for (let option = 0; option < optionsEditRemove.length; option++) {
+            assertions.isTrue((mainPage.returnOption(optionsEditRemove[option],i)).visible);
+        }
     }
         
 });
