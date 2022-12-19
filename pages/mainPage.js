@@ -53,7 +53,7 @@ class MainPage extends BasePage {
         return res;
     }
 
-    async findElementsByAPI(systemName, type, hddCapacity, index = 0){
+    async findElementsByText(systemName, type, hddCapacity, index = 0){
         const systemNameSelector = this.deviceName().withText(systemName);
         const systemTypeSelector = this.deviceType().withText(type);
         const systemCapacityelector = this.deviceCapacity().withText(hddCapacity);

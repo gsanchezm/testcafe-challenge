@@ -27,14 +27,14 @@ test('Verify devices exist on UI', async () => {
         const element = getAPIDevices.body[i];
         
         //Verify elements are visible
-        const {systemNameSelector,systemTypeSelector,systemCapacityelector} = await mainPage.findElementsByAPI(element.system_name,element.type,element.hdd_capacity);
-        await assertions.isTrue(systemNameSelector.visible);
-        await assertions.isTrue(systemTypeSelector.visible);
-        await assertions.isTrue(systemCapacityelector.visible);
+        const {systemNameSelector,systemTypeSelector,systemCapacityelector} = await mainPage.findElementsByText(element.system_name,element.type,element.hdd_capacity);
+        assertions.isTrue(systemNameSelector.visible);
+        assertions.isTrue(systemTypeSelector.visible);
+        assertions.isTrue(systemCapacityelector.visible);
 
         // Button edit and remove exits
-        await assertions.isTrue(await mainPage.getDevicesMainBox().nth(i).find('.device-edit').visible);
-        await assertions.isTrue(await mainPage.getDevicesMainBox().nth(i).find('.device-remove').visible);
+        assertions.isTrue(mainPage.getDevicesMainBox().nth(i).find('.device-edit').visible);
+        assertions.isTrue(mainPage.getDevicesMainBox().nth(i).find('.device-remove').visible);
     }
         
 });
@@ -51,14 +51,11 @@ test('Verify if Device is created using UI', async () => {
 
     mainPage.reloadPage();
 
-    const devicesList = await mainPage.getDevices();
-    const findDeviceName = devicesList.find(el => el.includes(systemInfo.name));
-    const findDeviceType = devicesList.find(el => el.includes(systemInfo.type));
-    const findDeviceCapacity = devicesList.find(el => el.includes(systemInfo.capacity));
-
-    await assertions.contains(findDeviceName, systemInfo.name)
-    await assertions.contains(findDeviceType, systemInfo.type)
-    await assertions.contains(findDeviceCapacity, systemInfo.capacity)
+    const {systemNameSelector,systemTypeSelector,systemCapacityelector} = await mainPage.findElementsByText(systemInfo.name,systemInfo.type,systemInfo.capacity);
+    
+    assertions.isTrue(systemNameSelector.visible);
+    assertions.isTrue(systemTypeSelector.visible);
+    assertions.isTrue(systemCapacityelector.visible);
 
 });
 
@@ -83,7 +80,7 @@ test('Rename First Device', async t => {
     });
 
     mainPage.reloadPage();
-    await assertions
+    assertions
         .isEqualsAsExpected(await mainPage.getDevicesListNames().nth(0).innerText, getFirstDevice.body.system_name, 'Check device name is updated');
 });
 
@@ -102,6 +99,6 @@ test('Delete last device', async t => {
     });
 
     mainPage.reloadPage();
-    await assertions
+    assertions
         .isFalse(await mainPage.getDevicesListNames().nth(-1).withText(lastDevice).exists, 'Device is not deleted');
 });
