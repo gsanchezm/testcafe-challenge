@@ -38,13 +38,6 @@ class MainPage extends BasePage {
     async returnOption(option, index = 0){
         return await this.getDevicesMainBox().nth(index).find(option)
     }
-    // async returnDeviceTypeText(index=0) {
-    //     return await this.getText(this.deviceType.nth(index));
-    // }
-
-    // async returnDeviceCapacityText(index=0) {
-    //     return await this.getText(this.deviceCapacity.nth(index));
-    // }
 
     async getDevices(){
         const res = []
